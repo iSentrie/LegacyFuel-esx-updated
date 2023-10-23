@@ -1,18 +1,28 @@
-local QBCore = exports['qb-core']:GetCoreObject()
+local isOx = GetResourceState('ox_inventory') == 'started'
 
 RegisterNetEvent('fuel:pay', function(price)
-	local Player = QBCore.Functions.GetPlayer(source)
+	local source = source
+	local xPlayer = ESX.GetPlayerFromId(source)
 	local amount = math.floor(price + 0.5)
+	print(amount)
 
-	if not Player or price <= 0 then return end
+	if price <= 0 then return end
 
-	Player.Functions.RemoveMoney('cash', amount)
+	if xPlayer.getMoney() >= amount then
+		xPlayer.removeMoney(amount)
+	end
 end)
 
 RegisterNetEvent('fuel:addPetrolCan', function()
-	local Player = QBCore.Functions.GetPlayer(source)
+	local source = source
+	local xPlayer = ESX.GetPlayerFromId(source)
 
-	if not Player then return end
+	if isOx then
+		if xPlayer.canCarryItem('weapon_petrolcan', 1) then
 
-	Player.Functions.AddItem('weapon_petrolcan', 1)
+			xPlayer.addInventoryItem('weapon_petrolcan', 1)
+		end
+	else
+		xPlayer.addWeapon('weapon_petrolcan', 4500)
+	end
 end)

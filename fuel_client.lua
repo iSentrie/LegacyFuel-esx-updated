@@ -1,5 +1,3 @@
-local QBCore = exports['qb-core']:GetCoreObject()
-
 local isNearPump = false
 local isFueling = false
 local currentFuel = 0.0
@@ -144,15 +142,16 @@ end
 AddEventHandler('fuel:startFuelUpTick', function(pumpObject, ped, vehicle)
 	currentFuel = GetVehicleFuelLevel(vehicle)
 
-	nozle = CreateObject(GetHashKey("prop_cs_fuel_nozle"), 0, 0, 0, true, true, true) -- creates object
+	local nozle = CreateObject(GetHashKey("prop_cs_fuel_nozle"), 0, 0, 0, true, true, true) -- creates object
 	AttachEntityToEntity(nozle, ped, GetPedBoneIndex(ped, 0x49D9), 0.1, 0.02, 0.02, 90.0, 40.0, 170.0, true, true, false, true, 1, true) -- object is attached to left hand
 
-	TriggerServerEvent("InteractSound_SV:PlayOnSource", "pickupnozzle", 0.4)----------------pick up sound
-	Wait(250)	
+	exports.xsound:PlayUrlPos('pickupnozzle', './sounds/pickupnozzle.ogg', 0.4, GetEntityCoords(PlayerPedId()), false)
+
+	Wait(250)
 
 	while isFueling do
 		Wait(500)
-		TriggerServerEvent("InteractSound_SV:PlayOnSource", "refuel", 0.3) ----------------------filling sound
+		exports.xsound:PlayUrlPos('refuel', './sounds/refuel.ogg', 0.3, GetEntityCoords(PlayerPedId()), false)
 		Wait(250)
 		local oldFuel = DecorGetFloat(vehicle, Config.FuelDecor)
 		local fuelToAdd = math.random(10, 20) / 10.0
@@ -191,9 +190,10 @@ AddEventHandler('fuel:startFuelUpTick', function(pumpObject, ped, vehicle)
 			description = 'Fueling is complete!',
 			type = 'success'
 		})
-		DeleteEntity(nozle) -------------------------------------------------------------------------------------------deletes nozle
-		TriggerServerEvent("InteractSound_SV:PlayOnSource", "putbacknozzle", 0.4)-----------------------------------------putback sound
-		Wait(250)	
+		DeleteEntity(nozle)
+		exports.xsound:PlayUrlPos('putbacknozzle', './sounds/putbacknozzle.ogg', 0.4, GetEntityCoords(PlayerPedId()), false)
+
+		Wait(250)
 	end
 
 	currentCost = 0.0
@@ -339,7 +339,6 @@ Citizen.CreateThread(function()
 
 							if IsControlJustReleased(0, 38) then
 								TriggerServerEvent('fuel:addPetrolCan')
-								TriggerEvent("inventory:client:ItemBox", QBCore.Shared.Items["weapon_petrolcan"], "add")
 								TriggerServerEvent('fuel:pay', Config.JerryCanCost)
 							end
 						else
@@ -385,7 +384,7 @@ Citizen.CreateThread(function()
 		else
 			lib.hideTextUI()
 			Citizen.Wait(250)
-			
+
 		end
 	end
 end)

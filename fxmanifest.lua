@@ -5,17 +5,18 @@ author 'InZidiuZ FRP'
 description 'Legacy Fuel Updated'
 version '1.31'
 
--- What to run
-client_scripts {
-	'config.lua',
-	'functions/functions_client.lua',
-	'source/fuel_client.lua'
+shared_scripts {
+	'@es_extended/imports.lua',
+	'config.lua'
 }
 
-server_scripts {
-	'config.lua',
-	'source/fuel_server.lua'
+-- What to run
+client_scripts {
+	'functions_client.lua',
+	'fuel_client.lua'
 }
+
+server_script 'fuel_server.lua'
 
 exports {
 	'GetFuel',
